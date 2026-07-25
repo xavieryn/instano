@@ -3,7 +3,7 @@ import WebKit
 enum Injector {
     // Diagnostic bisection: true = ship with NO injected script/CSS to test
     // whether blocker.js itself breaks Instagram's composer.
-    static let vanillaDiagnosticMode = true
+    static let vanillaDiagnosticMode = false
 
     static func makeContentController() -> WKUserContentController {
         let controller = WKUserContentController()

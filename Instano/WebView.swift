@@ -25,10 +25,6 @@ struct WebView: UIViewRepresentable {
         webView.isInspectable = true
         #endif
 
-        let refresh = UIRefreshControl()
-        refresh.addTarget(context.coordinator, action: #selector(Coordinator.refresh(_:)), for: .valueChanged)
-        webView.scrollView.refreshControl = refresh
-
         context.coordinator.webView = webView
         webView.load(URLRequest(url: Self.home))
         return webView
@@ -38,10 +34,6 @@ struct WebView: UIViewRepresentable {
 
     final class Coordinator: NSObject, WKNavigationDelegate {
         weak var webView: WKWebView?
-
-        @objc func refresh(_ sender: UIRefreshControl) {
-            webView?.reload()
-        }
 
         func webView(_ webView: WKWebView,
                      decidePolicyFor navigationAction: WKNavigationAction,
@@ -68,12 +60,5 @@ struct WebView: UIViewRepresentable {
             decisionHandler(.allow)
         }
 
-        func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-            webView.scrollView.refreshControl?.endRefreshing()
-        }
-
-        func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
-            webView.scrollView.refreshControl?.endRefreshing()
-        }
     }
 }

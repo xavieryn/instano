@@ -16,6 +16,10 @@
   var CSS = [
     'a[href="/reels/"], a[href^="/reels/"] { display: none !important; }',
     'a[href^="/explore/"]:not([href^="/explore/search"]) { display: none !important; }',
+    // Zero-flash: CSS kills reel tiles/posts before first paint (no JS delay)
+    'a[href^="/reel/"] { display: none !important; }',
+    'article:has(a[href^="/reel/"]) { display: none !important; }',
+    'html[data-instano-explore="1"] main a[href^="/p/"] { display: none !important; }',
     // Frosted-glass chrome on fixed top/bottom bars
     'header, [role="navigation"] {',
     '  background: rgba(255, 255, 255, 0.72) !important;',
@@ -35,6 +39,12 @@
     style.id = 'instano-style';
     style.textContent = CSS;
     (document.head || document.documentElement).appendChild(style);
+  }
+
+  // Synchronous URL stamp so CSS rules can react to route changes with no lag
+  function stampPath() {
+    var explore = location.pathname.indexOf('/explore') === 0 ? '1' : '0';
+    document.documentElement.setAttribute('data-instano-explore', explore);
   }
 
   // Keep the search entry point: retarget the nav magnifier from the explore
@@ -110,7 +120,9 @@
           }
         } catch (e) { /* malformed url: let it through */ }
       }
-      return original.apply(this, arguments);
+      var result = original.apply(this, arguments);
+      stampPath();
+      return result;
     };
   }
   guardHistory('pushState');
@@ -125,6 +137,7 @@
 
   function sweep() {
     injectCSS();
+    stampPath();
     forceFollowingFeed();
     retargetSearchLinks();
     hideReelItems();
@@ -133,11 +146,12 @@
     bounceIfBlocked();
   }
 
+  // Coalesce to the next frame: fast enough to be invisible, still batched
   var pending = false;
   function schedule() {
     if (pending) { return; }
     pending = true;
-    setTimeout(function () { pending = false; sweep(); }, 250);
+    requestAnimationFrame(function () { pending = false; sweep(); });
   }
 
   function start() {

@@ -2,7 +2,8 @@ import SwiftUI
 import WebKit
 
 struct WebView: UIViewRepresentable {
-    static let home = URL(string: "https://www.instagram.com/")!
+    // Following-variant feed: only followed accounts, no algorithmic suggestions
+    static let home = URL(string: "https://www.instagram.com/?variant=following")!
     // Safari UA: instagram.com serves the default WKWebView UA a degraded page
     static let userAgent = "Mozilla/5.0 (iPhone; CPU iPhone OS 17_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.5 Mobile/15E148 Safari/604.1"
 

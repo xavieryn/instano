@@ -47,14 +47,30 @@
     }
   }
 
-  // Home feed: hide suggested and sponsored posts (SocialLite parity)
+  // Structural fix: the home feed algorithm injects suggested accounts/reels.
+  // The "Following" variant is follow-only and chronological — force it.
+  function forceFollowingFeed() {
+    if (location.pathname === '/' && location.search.indexOf('variant=following') === -1) {
+      location.replace('/?variant=following');
+    }
+  }
+
+  // Fallback DOM layer: hide suggested/sponsored units the variant misses
+  var MARKERS = ['Suggested for you', 'Suggested reels', 'Suggested posts',
+                 'Sponsored', 'Reels you might like'];
+  function containsMarker(text) {
+    for (var i = 0; i < MARKERS.length; i++) {
+      if (text.indexOf(MARKERS[i]) !== -1) { return true; }
+    }
+    return false;
+  }
+
   function hideSuggestedPosts() {
-    var articles = document.querySelectorAll('article');
-    for (var i = 0; i < articles.length; i++) {
-      if (articles[i].style.display === 'none') { continue; }
-      var text = articles[i].textContent || '';
-      if (text.indexOf('Suggested for you') !== -1 || text.indexOf('Sponsored') !== -1) {
-        hide(articles[i]);
+    var units = document.querySelectorAll('article, main > div > div > div > section');
+    for (var i = 0; i < units.length; i++) {
+      if (units[i].style.display === 'none') { continue; }
+      if (containsMarker(units[i].textContent || '')) {
+        hide(units[i]);
       }
     }
   }
@@ -98,6 +114,7 @@
 
   function sweep() {
     injectCSS();
+    forceFollowingFeed();
     retargetSearchLinks();
     hideReelItems();
     hideSuggestedPosts();

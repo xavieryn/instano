@@ -10,8 +10,10 @@ final class BlockRulesTests: XCTestCase {
         XCTAssertFalse(BlockRules.allows(url("https://instagram.com/reels/audio/123/")))
     }
 
-    func testBlocksSingleReel() {
-        XCTAssertFalse(BlockRules.allows(url("https://www.instagram.com/reel/Cabc123/")))
+    func testAllowsSingleVideoPost() {
+        // Every IG video is a "reel"; single-video pages must work
+        XCTAssertTrue(BlockRules.allows(url("https://www.instagram.com/reel/Cabc123/")))
+        XCTAssertTrue(BlockRules.allows(url("https://www.instagram.com/reels/create/")))
     }
 
     func testBlocksExplore() {

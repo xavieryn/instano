@@ -27,6 +27,11 @@ final class BlockRulesTests: XCTestCase {
         XCTAssertTrue(BlockRules.allows(url("https://www.instagram.com/p/Cxyz789/")))
     }
 
+    func testAllowsPeopleSearch() {
+        XCTAssertTrue(BlockRules.allows(url("https://www.instagram.com/explore/search/")))
+        XCTAssertTrue(BlockRules.allows(url("https://www.instagram.com/explore/search/keyword/?q=joe")))
+    }
+
     func testDoesNotBlockPrefixLookalikes() {
         XCTAssertTrue(BlockRules.allows(url("https://www.instagram.com/reelsmith/")))
         XCTAssertTrue(BlockRules.allows(url("https://www.instagram.com/explorer_joe/")))

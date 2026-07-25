@@ -197,7 +197,7 @@
 
   // Route the create (+) button to the native desktop-composer sheet:
   // Instagram's mobile web composer cannot upload video; the desktop one can.
-  var CREATE_LABELS = ['New post', 'Create', 'Post', 'Nova publicação', 'Criar'];
+  var CREATE_RE = /new post|create|nova publica|criar/i;
   document.addEventListener('click', function (e) {
     var el = e.target && e.target.closest ? e.target.closest('a,button,div[role="button"]') : null;
     if (!el) { return; }
@@ -206,7 +206,9 @@
       var svg = el.querySelector('svg[aria-label]');
       if (svg) { label = svg.getAttribute('aria-label') || ''; }
     }
-    if (CREATE_LABELS.indexOf(label) === -1) { return; }
+    // Telemetry: learn the real labels Instagram uses
+    if (label) { report('click', label); }
+    if (!CREATE_RE.test(label)) { return; }
     e.preventDefault();
     e.stopPropagation();
     try { window.webkit.messageHandlers.instanoCreate.postMessage('open'); } catch (err) {}

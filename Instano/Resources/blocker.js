@@ -15,7 +15,18 @@
 
   var CSS = [
     'a[href="/reels/"], a[href^="/reels/"] { display: none !important; }',
-    'a[href^="/explore/"]:not([href^="/explore/search"]) { display: none !important; }'
+    'a[href^="/explore/"]:not([href^="/explore/search"]) { display: none !important; }',
+    // Frosted-glass chrome on fixed top/bottom bars
+    'header, [role="navigation"] {',
+    '  background: rgba(255, 255, 255, 0.72) !important;',
+    '  -webkit-backdrop-filter: saturate(180%) blur(20px) !important;',
+    '  backdrop-filter: saturate(180%) blur(20px) !important;',
+    '}',
+    '@media (prefers-color-scheme: dark) {',
+    '  header, [role="navigation"] {',
+    '    background: rgba(0, 0, 0, 0.6) !important;',
+    '  }',
+    '}'
   ].join('\n');
 
   function injectCSS() {

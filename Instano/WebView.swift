@@ -21,6 +21,9 @@ struct WebView: UIViewRepresentable {
         webView.customUserAgent = Self.userAgent
         webView.isOpaque = false
         webView.backgroundColor = .systemBackground
+        #if DEBUG
+        webView.isInspectable = true
+        #endif
 
         let refresh = UIRefreshControl()
         refresh.addTarget(context.coordinator, action: #selector(Coordinator.refresh(_:)), for: .valueChanged)

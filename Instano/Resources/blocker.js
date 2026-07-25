@@ -68,6 +68,17 @@
     if (el && el.style.display !== 'none') { el.style.display = 'none'; }
   }
 
+  // iOS quirk: restrictive `accept` lists make the picker hide videos
+  // entirely. Widen every file input so photos AND videos always show.
+  function fixFileInputs() {
+    var inputs = document.querySelectorAll('input[type="file"]');
+    for (var i = 0; i < inputs.length; i++) {
+      if (inputs[i].getAttribute('accept') !== 'image/*,video/*') {
+        inputs[i].setAttribute('accept', 'image/*,video/*');
+      }
+    }
+  }
+
   // Structural fix: the home feed algorithm injects suggested accounts/reels.
   // The "Following" variant is follow-only and chronological — force it.
   function forceFollowingFeed() {
@@ -140,6 +151,7 @@
     stampPath();
     forceFollowingFeed();
     retargetSearchLinks();
+    fixFileInputs();
     hideSuggestedPosts();
     hideExploreGrid();
     bounceIfBlocked();

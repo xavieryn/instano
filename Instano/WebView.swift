@@ -14,6 +14,7 @@ struct WebView: UIViewRepresentable {
         let config = WKWebViewConfiguration()
         config.userContentController = Injector.makeContentController()
         config.userContentController.add(context.coordinator, name: "instanoLog")
+        config.userContentController.add(context.coordinator, name: "instanoCreate")
         config.websiteDataStore = .default()
         config.allowsInlineMediaPlayback = true
         // Enables Service Workers for instagram.com (WKAppBoundDomains in
@@ -43,6 +44,10 @@ struct WebView: UIViewRepresentable {
 
         func userContentController(_ userContentController: WKUserContentController,
                                    didReceive message: WKScriptMessage) {
+            if message.name == "instanoCreate" {
+                NotificationCenter.default.post(name: .instanoOpenComposer, object: nil)
+                return
+            }
             log.error("web: \(String(describing: message.body), privacy: .public)")
         }
 

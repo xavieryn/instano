@@ -82,10 +82,31 @@
   // Structural fix: the home feed algorithm injects suggested accounts/reels.
   // The "Following" variant is follow-only and chronological — force it.
   function forceFollowingFeed() {
-    if (location.pathname === '/' && location.search.indexOf('variant=following') === -1) {
-      location.replace('/?variant=following');
-    }
+    if (location.pathname !== '/') { return; }
+    if (location.search.indexOf('variant=following') !== -1) { return; }
+    // Never reload while a dialog (composer, upload) is open — a reload
+    // here kills an in-flight post.
+    if (document.querySelector('div[role="dialog"]')) { return; }
+    location.replace('/?variant=following');
   }
+
+  // Error telemetry → native log (visible in Console.app / log stream)
+  function report(kind, msg) {
+    try {
+      window.webkit.messageHandlers.instanoLog.postMessage(kind + ': ' + String(msg).slice(0, 500));
+    } catch (e) { /* handler absent */ }
+  }
+  window.addEventListener('error', function (e) { report('jserror', e.message); });
+  window.addEventListener('unhandledrejection', function (e) { report('promise', e.reason); });
+  var origFetch = window.fetch;
+  window.fetch = function () {
+    return origFetch.apply(this, arguments).then(function (res) {
+      if (!res.ok && String(res.url).indexOf('instagram.com') !== -1) {
+        report('http' + res.status, res.url);
+      }
+      return res;
+    });
+  };
 
   // Fallback DOM layer: hide suggested/sponsored units the variant misses
   var MARKERS = ['Suggested for you', 'Suggested reels', 'Suggested posts',

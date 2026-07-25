@@ -1,3 +1,4 @@
+import OSLog
 import SwiftUI
 import WebKit
 
@@ -12,6 +13,7 @@ struct WebView: UIViewRepresentable {
     func makeUIView(context: Context) -> WKWebView {
         let config = WKWebViewConfiguration()
         config.userContentController = Injector.makeContentController()
+        config.userContentController.add(context.coordinator, name: "instanoLog")
         config.websiteDataStore = .default()
         config.allowsInlineMediaPlayback = true
 
@@ -32,8 +34,14 @@ struct WebView: UIViewRepresentable {
 
     func updateUIView(_ uiView: WKWebView, context: Context) {}
 
-    final class Coordinator: NSObject, WKNavigationDelegate {
+    final class Coordinator: NSObject, WKNavigationDelegate, WKScriptMessageHandler {
         weak var webView: WKWebView?
+        private let log = Logger(subsystem: "com.xaviernishikawa.instano", category: "web")
+
+        func userContentController(_ userContentController: WKUserContentController,
+                                   didReceive message: WKScriptMessage) {
+            log.error("web: \(String(describing: message.body), privacy: .public)")
+        }
 
         func webView(_ webView: WKWebView,
                      decidePolicyFor navigationAction: WKNavigationAction,

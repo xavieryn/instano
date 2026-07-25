@@ -21,6 +21,17 @@
     (document.head || document.documentElement).appendChild(style);
   }
 
+  // Lay the page out at desktop width, scaled to fit the phone, so the whole
+  // create dialog (incl. its Next button) is on-screen. Pinch-zoom stays on.
+  function forceViewport() {
+    var metas = document.querySelectorAll('meta[name="viewport"]');
+    for (var i = 0; i < metas.length; i++) { metas[i].remove(); }
+    var meta = document.createElement('meta');
+    meta.name = 'viewport';
+    meta.content = 'width=1100, initial-scale=0.35, minimum-scale=0.2, maximum-scale=3';
+    (document.head || document.documentElement).appendChild(meta);
+  }
+
   // Auto-open the create dialog so the user never browses the desktop site
   var tries = 0;
   var timer = setInterval(function () {
@@ -32,10 +43,14 @@
     if (++tries > 60) { clearInterval(timer); }
   }, 500);
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', injectCSS);
-  } else {
+  function boot() {
     injectCSS();
+    forceViewport();
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', boot);
+  } else {
+    boot();
   }
   new MutationObserver(injectCSS).observe(document.documentElement, { childList: true, subtree: true });
 })();

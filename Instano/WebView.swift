@@ -16,6 +16,9 @@ struct WebView: UIViewRepresentable {
         config.userContentController.add(context.coordinator, name: "instanoLog")
         config.websiteDataStore = .default()
         config.allowsInlineMediaPlayback = true
+        // Enables Service Workers for instagram.com (WKAppBoundDomains in
+        // Info.plist) — IG web's upload pipeline needs them
+        config.limitsNavigationsToAppBoundDomains = true
 
         let webView = WKWebView(frame: .zero, configuration: config)
         webView.navigationDelegate = context.coordinator

@@ -25,9 +25,6 @@
     // Feed/profile videos (/reel/<id>) stay visible — they are normal posts.
     'html[data-instano-explore="1"] main a[href^="/p/"],',
     'html[data-instano-explore="1"] main a[href^="/reel/"] { display: none !important; }',
-    // Composer cleanup: comfortable tap targets and breathing room in dialogs
-    'div[role="dialog"] button { min-height: 44px; }',
-    'div[role="dialog"] [role="menuitem"] { padding-top: 12px !important; padding-bottom: 12px !important; }',
     // Frosted-glass chrome on fixed top/bottom bars
     'header, [role="navigation"] {',
     '  background: rgba(255, 255, 255, 0.72) !important;',

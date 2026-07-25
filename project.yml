@@ -19,7 +19,6 @@ targets:
         INFOPLIST_KEY_UILaunchScreen_Generation: YES
         INFOPLIST_KEY_CFBundleDisplayName: Instano
         TARGETED_DEVICE_FAMILY: "1"
-        CODE_SIGNING_ALLOWED: NO
   InstanoTests:
     type: bundle.unit-test
     platform: iOS
@@ -27,7 +26,6 @@ targets:
     settings:
       base:
         GENERATE_INFOPLIST_FILE: YES
-        CODE_SIGNING_ALLOWED: NO
     dependencies:
       - target: Instano
 schemes:

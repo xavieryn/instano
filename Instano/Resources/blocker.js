@@ -78,11 +78,14 @@
 
   // Structural fix: the home feed algorithm injects suggested accounts/reels.
   // The "Following" variant is follow-only and chronological — force it.
+  // ONE-SHOT per page load. Re-running mid-session reloads the page and
+  // destroys open composers (dialogs unmount briefly between steps, so a
+  // dialog-open check alone cannot make this safe).
+  var didForceFeed = false;
   function forceFollowingFeed() {
-    if (location.pathname !== '/') { return; }
+    if (didForceFeed || location.pathname !== '/') { return; }
+    didForceFeed = true;
     if (location.search.indexOf('variant=following') !== -1) { return; }
-    // Never reload while a dialog (composer, upload) is open — a reload
-    // here kills an in-flight post.
     if (document.querySelector('div[role="dialog"]')) { return; }
     location.replace('/?variant=following');
   }
@@ -119,6 +122,7 @@
     var units = document.querySelectorAll('article, main > div > div > div > section');
     for (var i = 0; i < units.length; i++) {
       if (units[i].style.display === 'none') { continue; }
+      if (units[i].closest('[role="dialog"]')) { continue; }
       if (containsMarker(units[i].textContent || '')) {
         hide(units[i]);
       }

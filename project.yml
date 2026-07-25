@@ -7,7 +7,12 @@ targets:
   Instano:
     type: application
     platform: iOS
-    sources: [Instano]
+    sources:
+      - path: Instano
+        excludes: ["Resources/**"]
+      - path: Instano/Resources
+        type: folder
+        buildPhase: resources
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.xaviernishikawa.instano

@@ -25,13 +25,23 @@ struct ComposerSheet: View {
 struct ComposerWebView: UIViewRepresentable {
     static let desktopUA = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.5 Safari/605.1.15"
 
+    func makeCoordinator() -> Coordinator { Coordinator() }
+
     func makeUIView(context: Context) -> WKWebView {
         let config = WKWebViewConfiguration()
         config.websiteDataStore = .default()
         config.allowsInlineMediaPlayback = true
         config.limitsNavigationsToAppBoundDomains = true
 
+        let controller = WKUserContentController()
+        if let url = Bundle.main.url(forResource: "composer", withExtension: "js"),
+           let source = try? String(contentsOf: url, encoding: .utf8) {
+            controller.addUserScript(WKUserScript(source: source, injectionTime: .atDocumentStart, forMainFrameOnly: true))
+        }
+        config.userContentController = controller
+
         let webView = WKWebView(frame: .zero, configuration: config)
+        webView.navigationDelegate = context.coordinator
         webView.customUserAgent = Self.desktopUA
         #if DEBUG
         webView.isInspectable = true
@@ -41,4 +51,16 @@ struct ComposerWebView: UIViewRepresentable {
     }
 
     func updateUIView(_ uiView: WKWebView, context: Context) {}
+
+    final class Coordinator: NSObject, WKNavigationDelegate {
+        func webView(_ webView: WKWebView,
+                     decidePolicyFor navigationAction: WKNavigationAction,
+                     decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
+            guard let url = navigationAction.request.url else {
+                decisionHandler(.allow)
+                return
+            }
+            decisionHandler(BlockRules.allows(url) ? .allow : .cancel)
+        }
+    }
 }

@@ -1,0 +1,32 @@
+name: Instano
+options:
+  bundleIdPrefix: com.xaviernishikawa
+  deploymentTarget:
+    iOS: "17.0"
+targets:
+  Instano:
+    type: application
+    platform: iOS
+    sources: [Instano]
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.xaviernishikawa.instano
+        GENERATE_INFOPLIST_FILE: YES
+        INFOPLIST_KEY_UILaunchScreen_Generation: YES
+        INFOPLIST_KEY_CFBundleDisplayName: Instano
+        TARGETED_DEVICE_FAMILY: "1"
+        CODE_SIGNING_ALLOWED: NO
+  InstanoTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources: [InstanoTests]
+    dependencies:
+      - target: Instano
+schemes:
+  Instano:
+    build:
+      targets:
+        Instano: all
+        InstanoTests: [test]
+    test:
+      targets: [InstanoTests]

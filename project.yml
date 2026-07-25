@@ -20,6 +20,10 @@ targets:
     type: bundle.unit-test
     platform: iOS
     sources: [InstanoTests]
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+        CODE_SIGNING_ALLOWED: NO
     dependencies:
       - target: Instano
 schemes:
